@@ -43,35 +43,71 @@ namespace VN {
         }
       }
 
-      reader = new StreamReader(@"Content/" + _settings["StartFile"] + ".txt");
+      reader = new StreamReader(@"Content/" + _settings["StartFile"] + ".txt", Encoding.UTF7);
     }
 
     public string Next() {
       var line = reader.ReadLine();
       //if the line is a command
-      if (line[0] == '¶') {
-        var split = line.Split(' ');
-        ParseCommand();
-        line = Next();
+      while (line[0] == '¶') {
+        ParseCommand(line);
+        line = reader.ReadLine();
       }
+
       //if the line is a display line
-      else {
-        var split = line.Split('¶');
-        //if the line is dialogue and the format is: [shortcut]¶[displayline]
-        if (split.Length > 1) {
-          if (_settings[split[0]] == null) {
-            //todo: throw error
-          }
-          else {
-            global.currentLineStack.Add("Character", _settings[split[0]]);
-          }
+      var nameSplit = line.Split('¶');
+      //if the line is dialogue and the format is: [abbreviation]¶[displayline]
+      if (nameSplit.Length > 1) {
+        if (nameSplit[0] == "" || _settings[nameSplit[0]] == null) {
+          //todo: throw error
+        }
+        else {
+          global.currentLineStack.Add("Character", _settings[nameSplit[0]]);
+          line = nameSplit[1];
         }
       }
       return line;
     }
 
-    public void ParseCommand() {
+    public void ParseCommand(string line) {
+      var split = line.Substring(1).Split(' ');
+      switch (split[0]) {
+        case "next":
+          reader = new StreamReader(@"Content/" + split.Last() + ".txt", Encoding.UTF7);
+          break;
+        case "set":
+          if (split[1] == "bg") {
 
+          }
+          else if (split[1] == "l1") {
+
+          }
+          else if (split[1] == "l2") {
+
+          }
+          else if (split[1] == "r1") {
+
+          }
+          else if (split[1] == "r2") {
+
+          }
+          break;
+        case "play":
+          if (split[1] == "music") {
+
+          }
+          else if (split[1] == "sound") {
+          
+          }
+          else if (split[1] == "video") {
+
+          }
+          break;
+        case "check":
+          break;
+        default:
+          break;
+      }
     }
   }
 }

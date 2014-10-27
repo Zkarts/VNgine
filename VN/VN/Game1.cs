@@ -19,7 +19,7 @@ namespace VN {
     SpriteFont font;
     Parser _parser;
     MouseState currentMouseState = Mouse.GetState(), prevMouseState = Mouse.GetState();
-    string currentLine = "Start line";
+    string currentLine = "Start line", name = "";
 
     public Game1() {
       graphics = new GraphicsDeviceManager(this);
@@ -52,11 +52,22 @@ namespace VN {
       currentMouseState = Mouse.GetState();
       if (currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released) {
         currentLine = _parser.Next();
+        ProcessCurrentLineStack();
       }
 
       prevMouseState = currentMouseState;
 
       base.Update(gameTime);
+    }
+
+    private void ProcessCurrentLineStack() {
+      if (currentLineStack.ContainsKey("Character")) {
+        name = currentLineStack["Character"];
+        currentLineStack.Remove("Character");
+      }
+      else {
+        name = "";
+      }
     }
 
     /// <param name="gameTime">Provides a snapshot of timing values.</param>
@@ -67,6 +78,9 @@ namespace VN {
 
       spriteBatch.Begin();
       spriteBatch.DrawString(font, currentLine, new Vector2(100, 100), Color.Black);
+      if (name != "") {
+        spriteBatch.DrawString(font, name, new Vector2(100, 80), Color.Black);
+      }
       spriteBatch.End();
     }
   }

@@ -2,7 +2,7 @@
 <root>
   <StartFile>Start</StartFile>
   <Character>
-    <Shortcut></Shortcut>
-    <FullName></FullName>
+    <Abbreviation>a</Abbreviation>
+    <FullName>Albert</FullName>
   </Character>
 </root>

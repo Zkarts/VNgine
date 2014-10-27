@@ -16,8 +16,8 @@ Following is the list of possible commands:
  This will refer the game to the next text file if the designated decision has been made.
 
 You can set your characters in the Setup.xml file by filling in their full name under FullName and the abbreviation to use in
-the .txt files under Shortcut. This will allow you to use a command like:
-¶a "Where am I?"
+the .txt files under Abbreviation. This will allow you to use a command like:
+a¶"Where am I?"
 This will make the character whose name is shortened to "a", say "Where am I?" including the quotation marks.
 
 ¶check [choice name]
