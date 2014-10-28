@@ -66,7 +66,7 @@ namespace VN {
           line = nameSplit[1];
         }
       }
-      return line;
+      return "\"" + line + "\"";
     }
 
     public void ParseCommand(string line) {
