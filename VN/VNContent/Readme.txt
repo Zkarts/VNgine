@@ -36,10 +36,10 @@ Following is the list of possible commands:
   This creates a choice point that has 3 options.
   NOTE: This command is ALWAYS used in combination with the following command.
 
-¶option name description
-  This command defines the different options after the created choice. Following the "choice" command, this command has to
-  follow the amount of times defined in the "choice" command. Example:
-  ¶option wenthome Go home.
+¶name description
+  This command defines an option after the created choice. Following the "choice" command, this command has to follow the
+  amount of times defined in the "choice" command. The option's name should not contain spaces. Example:
+  ¶wenthome Go home.
   This will form an option shown to the player as "Go home.", which can be referred to by the developer as "wenthome".
 
 ¶next filename
@@ -52,8 +52,8 @@ Following is the list of possible commands:
   ¶next wenthome chapter3
   That will refer the program to the "chapter3.txt" file if the player chose the option designated as "wenthome".
 
-¶play music/sound/video file
-  This will play background music, a sound effect or a video file before displaying the next line. The filename should not
+¶play bgm/sound/video file
+  This will play background music (bgm), a sound effect or a video file before displaying the next line. The filename should not
   include the extension. The extension for background music is ".mp3", the extension for a sound effect is ".wav" and for
   a video file the extension is ".avi". Example:
   ¶play video intro

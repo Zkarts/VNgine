@@ -50,7 +50,7 @@ namespace VN {
       var line = reader.ReadLine();
       //if the line is a command
       while (line[0] == '¶') {
-        ParseCommand(line);
+        ParseCommand(line.Substring(1));
         line = reader.ReadLine();
       }
 
@@ -63,17 +63,22 @@ namespace VN {
         }
         else {
           global.currentLineStack.Add("Character", _settings[nameSplit[0]]);
-          line = nameSplit[1];
+          line = "\"" + nameSplit[1] + "\"";
         }
       }
-      return "\"" + line + "\"";
+      return line;
     }
 
     public void ParseCommand(string line) {
-      var split = line.Substring(1).Split(' ');
+      var split = line.Split(' ');
       switch (split[0]) {
         case "next":
-          reader = new StreamReader(@"Content/" + split.Last() + ".txt", Encoding.UTF7);
+          if (split.Length == 3) {
+
+          }
+          else {
+            reader = new StreamReader(@"Content/" + split.Last() + ".txt", Encoding.UTF7);
+          }
           break;
         case "set":
           if (split[1] == "bg") {
@@ -103,7 +108,15 @@ namespace VN {
 
           }
           break;
-        case "check":
+        case "choice":
+          for (int i = int.Parse(split[1]); i > 0; i--) {
+            //parse options
+            var option = reader.ReadLine();
+            global.currentLineStack.Add("option|" + option.Split(' ')[0].Substring(1), option.Substring(option.IndexOf(' ') + 1));
+          }
+          line = split.Count() == 3 ? split[2] : "";
+          break;
+        case "end":
           break;
         default:
           break;

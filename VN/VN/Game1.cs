@@ -13,7 +13,9 @@ using Microsoft.Xna.Framework.Media;
 namespace VN {
   public class Game1 : Microsoft.Xna.Framework.Game {
     public Dictionary<string, string> currentLineStack = new Dictionary<string, string>();
+    public Dictionary<string, bool> choices;
 
+    List<Tuple<string, string>> options = new List<Tuple<string,string>>();
     GraphicsDeviceManager graphics;
     SpriteBatch spriteBatch;
     SpriteFont font;
@@ -49,18 +51,32 @@ namespace VN {
       if (GamePad.GetState(PlayerIndex.One).Buttons.A == ButtonState.Pressed) {
         currentLine = _parser.Next();
       }
-      currentMouseState = Mouse.GetState();
-      if (currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released) {
-        currentLine = _parser.Next();
-        ProcessCurrentLineStack();
-      }
 
-      prevMouseState = currentMouseState;
+      currentMouseState = Mouse.GetState();
+
+      if (options.Any()) {
+        //make buttons
+      }
+      else {
+        if (currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released) {
+          currentLine = _parser.Next();
+          ProcessCurrentLineStack();
+        }
+
+        prevMouseState = currentMouseState;
+      }
 
       base.Update(gameTime);
     }
 
     private void ProcessCurrentLineStack() {
+      //add all the options from the stack to the right places
+      while (currentLineStack.Any(c => c.Key.Split('|')[0] == "option")) {
+        var optionPair = currentLineStack.First(c => c.Key.Split('|')[0] == "option");
+        choices.Add(optionPair.Key.Split('|')[1], false);
+        options.Add(new Tuple<string, string>(optionPair.Key.Split('|')[1], optionPair.Value));
+        currentLineStack.Remove(optionPair.Key);
+      }
       if (currentLineStack.ContainsKey("Character")) {
         name = currentLineStack["Character"];
         currentLineStack.Remove("Character");
