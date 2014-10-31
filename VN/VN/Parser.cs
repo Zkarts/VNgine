@@ -51,6 +51,9 @@ namespace VN {
       //if the line is a command
       while (line[0] == '¶') {
         ParseCommand(line.Substring(1));
+        if (line.Substring(0, 7) == "¶choice") {
+          return line;
+        }
         line = reader.ReadLine();
       }
 
@@ -74,7 +77,9 @@ namespace VN {
       switch (split[0]) {
         case "next":
           if (split.Length == 3) {
-
+            if (global.choices[split[1]]) {
+              reader = new StreamReader(@"Content/" + split.Last() + ".txt", Encoding.UTF7);
+            }
           }
           else {
             reader = new StreamReader(@"Content/" + split.Last() + ".txt", Encoding.UTF7);
@@ -109,14 +114,15 @@ namespace VN {
           }
           break;
         case "choice":
-          for (int i = int.Parse(split[1]); i > 0; i--) {
+          for (int i = 0; i < int.Parse(split[1]); i++) {
             //parse options
             var option = reader.ReadLine();
-            global.currentLineStack.Add("option|" + option.Split(' ')[0].Substring(1), option.Substring(option.IndexOf(' ') + 1));
+            global.options.Add(new Button { BoundingBox = new Rectangle(200, 100 + 20 * i, 600, 20), Choice = option.Split(' ')[0].Substring(1), Text = option.Substring(option.IndexOf(' ') + 1) });
+            global.choices.Add(option.Split(' ')[0].Substring(1), false);
           }
-          line = split.Count() == 3 ? split[2] : "";
           break;
         case "end":
+
           break;
         default:
           break;

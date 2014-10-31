@@ -5,4 +5,8 @@
     <Abbreviation>a</Abbreviation>
     <FullName>Albert</FullName>
   </Character>
+  <Character>
+    <Abbreviation>b</Abbreviation>
+    <FullName>Bruce</FullName>
+  </Character>
 </root>

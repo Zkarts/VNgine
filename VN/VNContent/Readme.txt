@@ -47,7 +47,7 @@ Following is the list of possible commands:
   ¶next chapter2
   That will refer the program to the "chapter2.txt" file.
 
-¶next choice filename
+¶next decision filename
   This will refer the game to the next text file if the designated decision has been made. Example:
   ¶next wenthome chapter3
   That will refer the program to the "chapter3.txt" file if the player chose the option designated as "wenthome".
