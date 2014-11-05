@@ -1,6 +1,10 @@
 Oh my Gotham, he knows it's me!
-¶choice 2
+¶choice 3
 ¶beatAlbert Beat up Albert to hide your identity
 ¶confessedIdentity Confess your identity to Albert
+¶flipdicks Floppy dicks
 ¶next beatAlbert Beat
 ¶next confessedIdentity Confess
+We gaan gewoon verder.
+WHAT ARE YOU SAYING??
+I NO SPIK DUTS!

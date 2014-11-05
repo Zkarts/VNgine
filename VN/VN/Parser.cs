@@ -7,6 +7,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace VN {
   class Parser {
@@ -69,7 +70,7 @@ namespace VN {
           line = "\"" + nameSplit[1] + "\"";
         }
       }
-      return line;
+      return WrapText(line, 650);
     }
 
     public void ParseCommand(string line) {
@@ -114,10 +115,15 @@ namespace VN {
           }
           break;
         case "choice":
+          int optionWidth = 550;
+          int extra = 0;
           for (int i = 0; i < int.Parse(split[1]); i++) {
             //parse options
             var option = reader.ReadLine();
-            global.options.Add(new Button { BoundingBox = new Rectangle(200, 100 + 20 * i, 600, 20), Choice = option.Split(' ')[0].Substring(1), Text = option.Substring(option.IndexOf(' ') + 1) });
+            string text = WrapText(option.Substring(option.IndexOf(' ') + 1), optionWidth);
+            int lines = text.Split('\n').Length;
+            global.options.Add(new Button { BoundingBox = new Rectangle(150, 100 + global.font.LineSpacing * (i + extra), optionWidth, global.font.LineSpacing * lines), Choice = option.Split(' ')[0].Substring(1), Text = text });
+            extra += lines - 1;
             global.choices.Add(option.Split(' ')[0].Substring(1), false);
           }
           break;
@@ -127,6 +133,22 @@ namespace VN {
         default:
           break;
       }
+    }
+
+    private String WrapText(String text, int width) {
+      String line = String.Empty;
+      String returnString = String.Empty;
+      String[] wordArray = text.Split(' ');
+
+      foreach (String word in wordArray) {
+        if (global.font.MeasureString(line + word).Length() > width) {
+          returnString = returnString + line + '\n';
+          line = String.Empty;
+        }
+        line = line + word + ' ';
+      }
+
+      return returnString + line;
     }
   }
 }

@@ -15,10 +15,10 @@ namespace VN {
     public Dictionary<string, string> currentLineStack = new Dictionary<string, string>();
     public Dictionary<string, bool> choices = new Dictionary<string,bool>();
     public List<Button> options = new List<Button>();
+    public SpriteFont font;
 
     GraphicsDeviceManager graphics;
     SpriteBatch spriteBatch;
-    SpriteFont font;
     Parser _parser;
     MouseState currentMouseState = Mouse.GetState(), prevMouseState = Mouse.GetState();
     string currentLine = "Start line", name = "";
