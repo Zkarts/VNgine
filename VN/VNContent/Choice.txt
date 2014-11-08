@@ -2,9 +2,10 @@ Oh my Gotham, he knows it's me!
 ¶choice 3
 ¶beatAlbert Beat up Albert to hide your identity
 ¶confessedIdentity Confess your identity to Albert
-¶flipdicks Floppy dicks
+¶frozeUp I'm not sure what to say
 ¶next beatAlbert Beat
 ¶next confessedIdentity Confess
-We gaan gewoon verder.
-WHAT ARE YOU SAYING??
-I NO SPIK DUTS!
+I freeze up.
+I don't know...
+What do I do?
+And no one heard from the Batman again.

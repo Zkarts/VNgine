@@ -15,10 +15,18 @@ namespace VN {
     public Dictionary<string, string> currentLineStack = new Dictionary<string, string>();
     public Dictionary<string, bool> choices = new Dictionary<string,bool>();
     public List<Button> options = new List<Button>();
+    public SpriteBatch spriteBatch;
     public SpriteFont font;
 
+    public enum GameState {
+      Menu = 1,
+      InGame = 2,
+    }
+    public GameState state;
+
+    Menu menu;
+    bool finishedGame;
     GraphicsDeviceManager graphics;
-    SpriteBatch spriteBatch;
     Parser _parser;
     MouseState currentMouseState = Mouse.GetState(), prevMouseState = Mouse.GetState();
     string currentLine = "Start line", name = "";
@@ -32,6 +40,8 @@ namespace VN {
       base.Initialize();
       _parser = new Parser(this);
       IsMouseVisible = true;
+      menu = new Menu(this);
+      state = GameState.Menu;
     }
 
     protected override void LoadContent() {
@@ -55,22 +65,27 @@ namespace VN {
 
       currentMouseState = Mouse.GetState();
 
-      if (currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released) {
-        //Handle options
-        if (options.Any()) {
-          foreach (var option in options) {
-            if (option.BoundingBox.Contains(new Point(currentMouseState.X, currentMouseState.Y))) {
-              choices[option.Choice] = true;
-              options.Clear();
-              currentLine = _parser.Next();
-              ProcessCurrentLineStack();
-              break;
+      if (state == GameState.Menu) {
+        menu.HandleMenu(currentMouseState, prevMouseState);
+      }
+      else if (state == GameState.InGame) {
+        if (currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released) {
+          //Handle options
+          if (options.Any()) {
+            foreach (var option in options) {
+              if (option.BoundingBox.Contains(new Point(currentMouseState.X, currentMouseState.Y))) {
+                choices[option.Choice] = true;
+                options.Clear();
+                currentLine = _parser.Next();
+                ProcessCurrentLineStack();
+                break;
+              }
             }
           }
-        }
-        else {
-          currentLine = _parser.Next();
-          ProcessCurrentLineStack();
+          else {
+            currentLine = _parser.Next();
+            ProcessCurrentLineStack();
+          }
         }
       }
 
@@ -96,18 +111,40 @@ namespace VN {
       base.Draw(gameTime);
 
       spriteBatch.Begin();
-      if (options.Any()) {
-        foreach (var option in options) {
-          spriteBatch.DrawString(font, option.Text, new Vector2(option.BoundingBox.Location.X, option.BoundingBox.Location.Y), Color.Black);
+      if (state == GameState.Menu) {
+        menu.Draw(gameTime);
+      }
+      else if (state == GameState.InGame) {
+        if (options.Any()) {
+          foreach (var option in options) {
+            //todo: dit moet beter
+            var button = Content.Load<Texture2D>("button");
+            spriteBatch.Draw(button, option.BoundingBox, Color.White);
+            //todo end
+            spriteBatch.DrawString(font, option.Text, new Vector2(option.BoundingBox.Location.X, option.BoundingBox.Location.Y), Color.Black);
+          }
+        }
+        else {
+          spriteBatch.DrawString(font, currentLine, new Vector2(100, 100), Color.Black);
+          if (name != "") {
+            spriteBatch.DrawString(font, name, new Vector2(100, 80), Color.Black);
+          }
         }
       }
-      else {
-        spriteBatch.DrawString(font, currentLine, new Vector2(100, 100), Color.Black);
-        if (name != "") {
-          spriteBatch.DrawString(font, name, new Vector2(100, 80), Color.Black);
-        }
-      }
+
       spriteBatch.End();
+    }
+
+    public void StartGame() {
+      state = GameState.InGame;
+      _parser.NewGame();
+      currentLine = _parser.Next();
+    }
+
+    public void FinishGame() {
+      state = GameState.Menu;
+      choices.Clear();
+      finishedGame = true;
     }
   }
 }

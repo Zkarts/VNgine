@@ -38,7 +38,7 @@ Following is the list of possible commands:
 
 ¶name description
   This command defines an option after the created choice. Following the "choice" command, this command has to follow the
-  amount of times defined in the "choice" command. The option's name should not contain spaces. Example:
+  amount of times defined by the number in the "choice" command. The option's name should not contain spaces. Example:
   ¶wenthome Go home.
   This will form an option shown to the player as "Go home.", which can be referred to by the developer as "wenthome".
 

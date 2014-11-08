@@ -44,6 +44,9 @@ namespace VN {
         }
       }
 
+    }
+
+    public void NewGame() {
       reader = new StreamReader(@"Content/" + _settings["StartFile"] + ".txt", Encoding.UTF7);
     }
 
@@ -52,6 +55,9 @@ namespace VN {
       //if the line is a command
       while (line[0] == '¶') {
         ParseCommand(line.Substring(1));
+        if (global.state != Game1.GameState.InGame) {
+          return "";
+        }
         if (line.Substring(0, 7) == "¶choice") {
           return line;
         }
@@ -128,7 +134,7 @@ namespace VN {
           }
           break;
         case "end":
-
+          global.FinishGame();
           break;
         default:
           break;

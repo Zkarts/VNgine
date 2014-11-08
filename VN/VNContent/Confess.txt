@@ -1,7 +1,9 @@
 b¶I trust you will keep my secret safe.
-a¶Well... Okay, sure. For a price of course.
+a¶Well... Okay, sure. For a price, of course.
 b¶Heh, no problem. I am a millionaire after all.
-a¶You're a millionaire *playboy*, right?
-b¶Ah... That kind of price. Well, whatever. I prefer bats myself anyway.
-I'm really not sure how I'm a hero...
+a¶I want one ride in your Batmobile.
+That's when I said the stupidest thing in my entire life.
+b¶That's all? Well, sure!
+The only thing they found after the crash was my driver's license.
+They all know my identity...
 ¶end
