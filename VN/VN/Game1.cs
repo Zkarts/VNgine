@@ -73,8 +73,11 @@ namespace VN {
           //Handle options
           if (options.Any()) {
             foreach (var option in options) {
+              //if clicked on the option button
               if (option.BoundingBox.Contains(new Point(currentMouseState.X, currentMouseState.Y))) {
+                //set the option to true in choices
                 choices[option.Choice] = true;
+                //clear the current options
                 options.Clear();
                 currentLine = _parser.Next();
                 ProcessCurrentLineStack();
@@ -94,6 +97,7 @@ namespace VN {
       base.Update(gameTime);
     }
 
+    //Processes everything in the CurrentLineStack
     private void ProcessCurrentLineStack() {
       if (currentLineStack.ContainsKey("Character")) {
         name = currentLineStack["Character"];
@@ -135,12 +139,14 @@ namespace VN {
       spriteBatch.End();
     }
 
+    //Starts a new game
     public void StartGame() {
       state = GameState.InGame;
       _parser.NewGame();
       currentLine = _parser.Next();
     }
 
+    //Ends a game and clears the data
     public void FinishGame() {
       state = GameState.Menu;
       choices.Clear();

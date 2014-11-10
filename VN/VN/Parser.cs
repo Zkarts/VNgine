@@ -15,6 +15,8 @@ namespace VN {
     Dictionary<string,string> _settings;
     Game1 global;
 
+    const int OptionWidth = 550;
+
     public Parser(Game1 game) {
       global = game;
       _settings = new Dictionary<string,string>();
@@ -22,6 +24,7 @@ namespace VN {
       var doc = XDocument.Load(@"Content/Setup.xml");
       XElement xel = (XElement)doc.Root.FirstNode;
 
+      //reads the entire settings.xml file and saves the data in a usable format
       while (true) {
         if (xel.HasElements) {
           if (xel.Name == "Character") {
@@ -46,10 +49,12 @@ namespace VN {
 
     }
 
+    //Refreshes the StreamReader for a new game
     public void NewGame() {
       reader = new StreamReader(@"Content/" + _settings["StartFile"] + ".txt", Encoding.UTF7);
     }
 
+    //Reads the next line and fills the CurrentLineStack if needed
     public string Next() {
       var line = reader.ReadLine();
       //if the line is a command
@@ -72,6 +77,7 @@ namespace VN {
           //todo: throw error
         }
         else {
+          //Adds the speakers name to the CurrentLineStack
           global.currentLineStack.Add("Character", _settings[nameSplit[0]]);
           line = "\"" + nameSplit[1] + "\"";
         }
@@ -79,10 +85,12 @@ namespace VN {
       return WrapText(line, 650);
     }
 
+    //Parses the different commands
     public void ParseCommand(string line) {
       var split = line.Split(' ');
       switch (split[0]) {
         case "next":
+          //if the command is in the format: next [boolean choice] filename
           if (split.Length == 3) {
             if (global.choices[split[1]]) {
               reader = new StreamReader(@"Content/" + split.Last() + ".txt", Encoding.UTF7);
@@ -121,15 +129,18 @@ namespace VN {
           }
           break;
         case "choice":
-          int optionWidth = 550;
-          int extra = 0;
+          int extraLines = 0;
           for (int i = 0; i < int.Parse(split[1]); i++) {
             //parse options
             var option = reader.ReadLine();
-            string text = WrapText(option.Substring(option.IndexOf(' ') + 1), optionWidth);
+            string text = WrapText(option.Substring(option.IndexOf(' ') + 1), OptionWidth);
             int lines = text.Split('\n').Length;
-            global.options.Add(new Button { BoundingBox = new Rectangle(150, 100 + global.font.LineSpacing * (i + extra), optionWidth, global.font.LineSpacing * lines), Choice = option.Split(' ')[0].Substring(1), Text = text });
-            extra += lines - 1;
+            global.options.Add(new Button {
+              BoundingBox = new Rectangle(150, 100 + global.font.LineSpacing * (i + extraLines), OptionWidth, global.font.LineSpacing * lines),
+              Choice = option.Split(' ')[0].Substring(1),
+              Text = text
+            });
+            extraLines += lines - 1;
             global.choices.Add(option.Split(' ')[0].Substring(1), false);
           }
           break;
@@ -141,6 +152,7 @@ namespace VN {
       }
     }
 
+    //Wraps text within a box of the width and returns the wrapped string
     private String WrapText(String text, int width) {
       String line = String.Empty;
       String returnString = String.Empty;

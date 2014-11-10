@@ -8,12 +8,6 @@ using Microsoft.Xna.Framework.Input;
 
 namespace VN {
   public class Menu {
-    /*enum CurrentMenu {
-      MainMenu = 1,
-      Settings = 2,
-      Save = 3,
-      Load = 4,
-    }*/
     Texture2D button;
 
     List<Button> current;
@@ -55,6 +49,7 @@ namespace VN {
       };
     }
 
+    //Handles clicking the buttons for the current menu
     public void HandleMenu(MouseState currentMouseState, MouseState prevMouseState) {
       if (currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released) {
         foreach (var button in current) {
@@ -75,12 +70,14 @@ namespace VN {
       }
     }
 
+    //Draws the buttons in the current menu
     public void Draw(GameTime gameTime) {
       foreach (Button b in current) {
         DrawMenuButton(b, gameTime);
       }
     }
 
+    //Draws the actual buttons
     void DrawMenuButton(Button button, GameTime gameTime) {
       if (button.Sprite != null) {
         global.spriteBatch.Draw(button.Sprite, button.BoundingBox, Color.White);
