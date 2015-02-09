@@ -29,7 +29,7 @@ namespace VN {
     GraphicsDeviceManager graphics;
     Parser _parser;
     MouseState currentMouseState = Mouse.GetState(), prevMouseState = Mouse.GetState();
-    string currentLine = "Start line", name = "";
+    string currentLine = "Start line", displayString = "", name = "";
 
     public Game1() {
       graphics = new GraphicsDeviceManager(this);
@@ -67,6 +67,7 @@ namespace VN {
 
       if (state == GameState.Menu) {
         menu.HandleMenu(currentMouseState, prevMouseState);
+        displayString = "";
       }
       else if (state == GameState.InGame) {
         if (currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released) {
@@ -81,17 +82,26 @@ namespace VN {
                 options.Clear();
                 currentLine = _parser.Next();
                 ProcessCurrentLineStack();
+                displayString = "";
                 break;
               }
             }
           }
           else {
-            currentLine = _parser.Next();
-            ProcessCurrentLineStack();
+            if (displayString == currentLine) {
+              displayString = "";
+              currentLine = _parser.Next();
+              ProcessCurrentLineStack();
+            }
+            else {
+              displayString = currentLine;
+            }
           }
         }
       }
-
+      if (displayString != currentLine) {
+        displayString += currentLine[displayString.Length];
+      }
       prevMouseState = currentMouseState;
 
       base.Update(gameTime);
@@ -129,7 +139,7 @@ namespace VN {
           }
         }
         else {
-          spriteBatch.DrawString(font, currentLine, new Vector2(100, 100), Color.Black);
+          spriteBatch.DrawString(font, displayString, new Vector2(100, 100), Color.Black);
           if (name != "") {
             spriteBatch.DrawString(font, name, new Vector2(100, 80), Color.Black);
           }
