@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace VN {
-  public class Menu {
+  public class Menu : GameState {
     Texture2D button;
 
     List<Button> current;
@@ -15,10 +15,8 @@ namespace VN {
     List<Button> Settings;
     List<Button> Save;
     List<Button> Load;
-    Game1 global;
 
-    public Menu(Game1 game) {
-      global = game;
+    public Menu(Game1 game) : base(game) {
       InitializeMenus();
       current = MainMenu;
     }
@@ -28,37 +26,47 @@ namespace VN {
       MainMenu = new List<Button> {
         new Button {
           BoundingBox = new Rectangle(100, 100, 200, 40),
+          Function = ButtonFunction.StartGame,
           Text = "Start game",
           Sprite = button,
         },
         new Button {
           BoundingBox = new Rectangle(100, 150, 200, 40),
+          Function = ButtonFunction.LoadGame,
           Text = "Load game",
           Sprite = button,
         },
         new Button {
           BoundingBox = new Rectangle(100, 200, 200, 40),
+          Function = ButtonFunction.CGGallery,
           Text = "CG Gallery",
           Sprite = button,
         },
         new Button {
           BoundingBox = new Rectangle(100, 250, 200, 40),
+          Function = ButtonFunction.Exit,
           Text = "Exit",
           Sprite = button,
         },
       };
     }
 
+    public override void Update(GameTime gameTime) {
+      prevMouseState = currentMouseState;
+      currentMouseState = Mouse.GetState();
+      HandleInput(currentMouseState, prevMouseState);
+    }
+
     //Handles clicking the buttons for the current menu
-    public void HandleMenu(MouseState currentMouseState, MouseState prevMouseState) {
+    public override void HandleInput(MouseState currentMouseState, MouseState prevMouseState) {
       if (currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released) {
         foreach (var button in current) {
           if (button.BoundingBox.Contains(new Point(currentMouseState.X, currentMouseState.Y))) {
-            switch (button.Text) {
-              case "Start game":
+            switch (button.Function) {
+              case ButtonFunction.StartGame:
                 global.StartGame();
                 break;
-              case "Exit":
+              case ButtonFunction.Exit:
                 global.Exit();
                 break;
               default:
@@ -71,7 +79,7 @@ namespace VN {
     }
 
     //Draws the buttons in the current menu
-    public void Draw(GameTime gameTime) {
+    public override void Draw(GameTime gameTime) {
       foreach (Button b in current) {
         DrawMenuButton(b, gameTime);
       }
@@ -83,6 +91,10 @@ namespace VN {
         global.spriteBatch.Draw(button.Sprite, button.BoundingBox, Color.White);
       }
       global.spriteBatch.DrawString(global.font, button.Text, new Vector2(button.BoundingBox.X, button.BoundingBox.Y), Color.Black);
+    }
+
+    public override void Reset() {
+
     }
   }
 }

@@ -13,6 +13,9 @@ namespace VN {
   class Parser {
     StreamReader reader;
     Dictionary<string,string> _settings;
+    public Dictionary<string, string> currentLineStack = new Dictionary<string, string>();
+    public Dictionary<string, bool> choices = new Dictionary<string, bool>();
+    public List<Button> options = new List<Button>();
     Game1 global;
 
     const int OptionWidth = 550;
@@ -60,7 +63,7 @@ namespace VN {
       //if the line is a command
       while (line[0] == '¶') {
         ParseCommand(line.Substring(1));
-        if (global.state != Game1.GameState.InGame) {
+        if (line == "¶end") {
           return "";
         }
         if (line.Substring(0, 7) == "¶choice") {
@@ -78,7 +81,7 @@ namespace VN {
         }
         else {
           //Adds the speakers name to the CurrentLineStack
-          global.currentLineStack.Add("Character", _settings[nameSplit[0]]);
+          currentLineStack.Add("Character", _settings[nameSplit[0]]);
           line = "\"" + nameSplit[1] + "\"";
         }
       }
@@ -92,7 +95,7 @@ namespace VN {
         case "next":
           //if the command is in the format: next [boolean choice] filename
           if (split.Length == 3) {
-            if (global.choices[split[1]]) {
+            if (choices[split[1]]) {
               reader = new StreamReader(@"Content/" + split.Last() + ".txt", Encoding.UTF7);
             }
           }
@@ -135,16 +138,18 @@ namespace VN {
             var option = reader.ReadLine();
             string text = WrapText(option.Substring(option.IndexOf(' ') + 1), OptionWidth);
             int lines = text.Split('\n').Length;
-            global.options.Add(new Button {
+            options.Add(new Button {
               BoundingBox = new Rectangle(150, 100 + global.font.LineSpacing * (i + extraLines), OptionWidth, global.font.LineSpacing * lines),
               Choice = option.Split(' ')[0].Substring(1),
               Text = text
             });
             extraLines += lines - 1;
-            global.choices.Add(option.Split(' ')[0].Substring(1), false);
+            choices.Add(option.Split(' ')[0].Substring(1), false);
           }
           break;
         case "end":
+          //Ends a game and clears the data
+          choices.Clear();
           global.FinishGame();
           break;
         default:
