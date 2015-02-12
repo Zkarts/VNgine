@@ -1,0 +1,14 @@
+JAH!
+- Auto forward text gebaseerd op een timer (die mogelijk editable is)
+- Image display
+- Save/Load
+
+Jah...
+- Teruglezen met omhoog scrollen
+- Quick Save/Load
+
+Mwah...
+- Skip gelezen text
+- CG Gallery en booleans voor "seen image"
+- Video Gallery (zelfde idee)
+- Taken paths overview

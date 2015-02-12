@@ -90,7 +90,7 @@ namespace VN {
       if (button.Sprite != null) {
         global.spriteBatch.Draw(button.Sprite, button.BoundingBox, Color.White);
       }
-      global.spriteBatch.DrawString(global.font, button.Text, new Vector2(button.BoundingBox.X, button.BoundingBox.Y), Color.Black);
+      global.spriteBatch.DrawString(global.font, button.Text, new Vector2(button.BoundingBox.X + 10, button.BoundingBox.Y + 5), Color.Black);
     }
 
     public override void Reset() {

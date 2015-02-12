@@ -14,7 +14,11 @@ namespace VN {
     StreamReader reader;
     Dictionary<string,string> _settings;
     public Dictionary<string, string> currentLineStack = new Dictionary<string, string>();
-    public Dictionary<string, bool> choices = new Dictionary<string, bool>();
+
+    //todo: deze moet eigenlijk echt niet hier... in de Save misschien?
+    public Dictionary<string, bool> madeDecisions = new Dictionary<string, bool>();
+
+    //todo: deze moet eigenlijk ook echt niet hier, maar in de InGame
     public List<Button> options = new List<Button>();
     Game1 global;
 
@@ -57,10 +61,10 @@ namespace VN {
       reader = new StreamReader(@"Content/" + _settings["StartFile"] + ".txt", Encoding.UTF7);
     }
 
-    //Reads the next line and fills the CurrentLineStack if needed
+    //Reads the next line and fills the CurrentLineStack if needed, to pass the necessary actions on to the GameState
     public string Next() {
       var line = reader.ReadLine();
-      //if the line is a command
+      //while the line is a command
       while (line[0] == '¶') {
         ParseCommand(line.Substring(1));
         if (line == "¶end") {
@@ -72,9 +76,9 @@ namespace VN {
         line = reader.ReadLine();
       }
 
-      //if the line is a display line
+      //The next line is a display line
       var nameSplit = line.Split('¶');
-      //if the line is dialogue and the format is: [abbreviation]¶[displayline]
+      //if the line is dialogue and the format is: <name abbreviation>¶<displayline>
       if (nameSplit.Length > 1) {
         if (nameSplit[0] == "" || _settings[nameSplit[0]] == null) {
           //todo: throw error
@@ -82,6 +86,7 @@ namespace VN {
         else {
           //Adds the speakers name to the CurrentLineStack
           currentLineStack.Add("Character", _settings[nameSplit[0]]);
+          //It's a spoken line, so add quotation marks
           line = "\"" + nameSplit[1] + "\"";
         }
       }
@@ -89,13 +94,14 @@ namespace VN {
     }
 
     //Parses the different commands
+    //todo? het verwerken moet eigenlijk ergens anders denk ik?
     public void ParseCommand(string line) {
       var split = line.Split(' ');
       switch (split[0]) {
         case "next":
-          //if the command is in the format: next [boolean choice] filename
+          //if the command is in the format: next <decision> filename
           if (split.Length == 3) {
-            if (choices[split[1]]) {
+            if (madeDecisions[split[1]]) {
               reader = new StreamReader(@"Content/" + split.Last() + ".txt", Encoding.UTF7);
             }
           }
@@ -144,12 +150,12 @@ namespace VN {
               Text = text
             });
             extraLines += lines - 1;
-            choices.Add(option.Split(' ')[0].Substring(1), false);
+            madeDecisions.Add(option.Split(' ')[0].Substring(1), false);
           }
           break;
         case "end":
           //Ends a game and clears the data
-          choices.Clear();
+          madeDecisions.Clear();
           global.FinishGame();
           break;
         default:
