@@ -1,5 +1,5 @@
 JAH!
-- Auto forward text gebaseerd op een timer (die mogelijk editable is)
+(Y) Auto forward text gebaseerd op een timer (die mogelijk editable is)
 - Image display
 - Save/Load
 

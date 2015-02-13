@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace VN {
   public class InGame : GameState {
+    KeyboardState currentKeyboardState, prevKeyboardState;
+    bool autoMode;
+    double autoTimer;
     Parser _parser;
     string currentLine = "Start line", displayString = "", name = "";
 
@@ -16,6 +19,8 @@ namespace VN {
     }
 
     public override void Update(GameTime gameTime) {
+      prevKeyboardState = currentKeyboardState;
+      currentKeyboardState = Keyboard.GetState();
       prevMouseState = currentMouseState;
       currentMouseState = Mouse.GetState();
       HandleInput(currentMouseState, prevMouseState);
@@ -24,23 +29,34 @@ namespace VN {
       if (displayString != currentLine) {
         displayString += currentLine[displayString.Length];
       }
+      else {
+        if (autoMode && !_parser.options.Any()) {
+          autoTimer -= gameTime.ElapsedGameTime.TotalSeconds;
+          if (autoTimer <= 0) {
+            NextLine();
+          }
+        }
+      }
     }
 
     //Starts a new game
     public void StartGame() {
+      autoMode = false;
       _parser.NewGame();
-      currentLine = _parser.Next();
+      NextLine();
     }
 
     public override void HandleInput(MouseState currentMouseState, MouseState prevMouseState) {
+      if (currentKeyboardState.IsKeyDown(Keys.A) && !prevKeyboardState.IsKeyDown(Keys.A)) {
+        autoMode = !autoMode;
+      }
+
       if (currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released) {
         //Handle options
         if (!_parser.options.Any()) {
           //if there are no clickable options
           if (displayString == currentLine) {
-            displayString = "";
-            currentLine = _parser.Next();
-            ProcessCurrentLineStack();
+            NextLine();
           }
           else {
             displayString = currentLine;
@@ -64,6 +80,13 @@ namespace VN {
       }
     }
 
+    private void NextLine() {
+      displayString = "";
+      currentLine = _parser.Next();
+      autoTimer = Math.Max(currentLine.Length * 0.025, 1.5);
+      ProcessCurrentLineStack();
+    }
+
     //Processes everything in the CurrentLineStack
     private void ProcessCurrentLineStack() {
       if (_parser.currentLineStack.ContainsKey("Character")) {
@@ -82,11 +105,14 @@ namespace VN {
         if (name != "") {
           global.spriteBatch.DrawString(global.font, name, new Vector2(100, 80), Color.Black);
         }
+        if (autoMode) {
+          global.spriteBatch.DrawString(global.font, "Auto " + autoTimer, new Vector2(600, 300), Color.DarkGreen);
+        }
       }
       else {
         foreach (var option in _parser.options) {
           global.spriteBatch.Draw(option.Sprite, option.BoundingBox, Color.White);
-          global.spriteBatch.DrawString(global.font, option.Text, new Vector2(option.BoundingBox.Location.X, option.BoundingBox.Location.Y), Color.Black);
+          global.spriteBatch.DrawString(global.font, option.Text, new Vector2(option.BoundingBox.Location.X + 15, option.BoundingBox.Location.Y), Color.Black);
         }
       }
     }

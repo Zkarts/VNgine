@@ -99,10 +99,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="A List of Requirements.txt">
+    <None Include="A List of Requirements.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>A List of Requirements</Name>
-    </Compile>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 

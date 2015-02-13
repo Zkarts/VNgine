@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace VN {
   class Parser {
+
     StreamReader reader;
     Dictionary<string,string> _settings;
     public Dictionary<string, string> currentLineStack = new Dictionary<string, string>();
@@ -20,12 +21,17 @@ namespace VN {
 
     //todo: deze moet eigenlijk ook echt niet hier, maar in de InGame
     public List<Button> options = new List<Button>();
+    Texture2D button;
+    
     Game1 global;
 
     const int OptionWidth = 550;
 
     public Parser(Game1 game) {
       global = game;
+
+      button = global.Content.Load<Texture2D>("button");
+
       _settings = new Dictionary<string,string>();
 
       var doc = XDocument.Load(@"Content/Setup.xml");
@@ -147,7 +153,8 @@ namespace VN {
             options.Add(new Button {
               BoundingBox = new Rectangle(150, 100 + global.font.LineSpacing * (i + extraLines), OptionWidth, global.font.LineSpacing * lines),
               Choice = option.Split(' ')[0].Substring(1),
-              Text = text
+              Text = text,
+              Sprite = button,
             });
             extraLines += lines - 1;
             madeDecisions.Add(option.Split(' ')[0].Substring(1), false);
