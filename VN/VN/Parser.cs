@@ -13,8 +13,9 @@ namespace VN {
   class Parser {
 
     StreamReader _reader;
-    readonly Dictionary<string,string> _settings;
+    readonly Dictionary<string, string> _settings = new Dictionary<string, string>();
     public Dictionary<string, string> CurrentLineStack = new Dictionary<string, string>();
+    public Dictionary<string, Texture2D> Images = new Dictionary<string, Texture2D>();
 
     //todo: deze moet eigenlijk echt niet hier... in de Save misschien?
     public Dictionary<string, bool> MadeDecisions = new Dictionary<string, bool>();
@@ -32,8 +33,6 @@ namespace VN {
 
       button = global.Content.Load<Texture2D>("button");
 
-      _settings = new Dictionary<string,string>();
-
       var doc = XDocument.Load(@"Content/Setup.xml");
       XElement xel = (XElement)doc.Root.FirstNode;
 
@@ -42,10 +41,14 @@ namespace VN {
         if (xel.HasElements) {
           if (xel.Name == "Character")
           {
-            xel.Descendants();
-            var child = (XElement)xel.FirstNode;
-            var childSibling = (XElement)xel.FirstNode.NextNode;
-            _settings.Add(child.Value, childSibling.Value);
+            var children = xel.Descendants();
+            var abbreviation = (XElement)xel.FirstNode;
+            var name = (XElement)xel.FirstNode.NextNode;
+            _settings.Add(abbreviation.Value + "Name", name.Value);
+            var imgElement = children.FirstOrDefault(c => c.Name == "StandardImg");
+            if (imgElement != null) {
+              Images.Add(name.Value + "StdImg", global.Content.Load<Texture2D>(imgElement.Value));
+            }
           }
         }
         else {
@@ -88,12 +91,12 @@ namespace VN {
       var nameSplit = line.Split('¶');
       //if the line is dialogue and the format is: <name abbreviation>¶<displayline>
       if (nameSplit.Length > 1) {
-        if (nameSplit[0] == "" || _settings[nameSplit[0]] == null) {
+        if (nameSplit[0] == "" || _settings[nameSplit[0] + "Name"] == null) {
           //todo: throw error
         }
         else {
           //Adds the speakers name to the CurrentLineStack
-          CurrentLineStack.Add("Character", _settings[nameSplit[0]]);
+          CurrentLineStack.Add("Character", _settings[nameSplit[0] + "Name"]);
           //It's a spoken line, so add quotation marks
           line = "\"" + nameSplit[1] + "\"";
         }

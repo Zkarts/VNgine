@@ -104,6 +104,9 @@ namespace VN {
         global.spriteBatch.DrawString(global.font, displayString, new Vector2(100, 100), Color.Black);
         if (name != "") {
           global.spriteBatch.DrawString(global.font, name, new Vector2(100, 80), Color.Black);
+          if (_parser.Images.ContainsKey(name + "StdImg")) {
+            global.spriteBatch.Draw(_parser.Images[name + "StdImg"], new Vector2(300, 80), Color.White);
+          }
         }
         if (autoMode) {
           global.spriteBatch.DrawString(global.font, "Auto " + autoTimer, new Vector2(600, 300), Color.DarkGreen);
