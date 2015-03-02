@@ -12,15 +12,15 @@ using Microsoft.Xna.Framework.Graphics;
 namespace VN {
   class Parser {
 
-    StreamReader reader;
-    Dictionary<string,string> _settings;
-    public Dictionary<string, string> currentLineStack = new Dictionary<string, string>();
+    StreamReader _reader;
+    readonly Dictionary<string,string> _settings;
+    public Dictionary<string, string> CurrentLineStack = new Dictionary<string, string>();
 
     //todo: deze moet eigenlijk echt niet hier... in de Save misschien?
-    public Dictionary<string, bool> madeDecisions = new Dictionary<string, bool>();
+    public Dictionary<string, bool> MadeDecisions = new Dictionary<string, bool>();
 
     //todo: deze moet eigenlijk ook echt niet hier, maar in de InGame
-    public List<Button> options = new List<Button>();
+    public List<Button> Options = new List<Button>();
     Texture2D button;
     
     Game1 global;
@@ -40,7 +40,9 @@ namespace VN {
       //reads the entire settings.xml file and saves the data in a usable format
       while (true) {
         if (xel.HasElements) {
-          if (xel.Name == "Character") {
+          if (xel.Name == "Character")
+          {
+            xel.Descendants();
             var child = (XElement)xel.FirstNode;
             var childSibling = (XElement)xel.FirstNode.NextNode;
             _settings.Add(child.Value, childSibling.Value);
@@ -64,12 +66,12 @@ namespace VN {
 
     //Refreshes the StreamReader for a new game
     public void NewGame() {
-      reader = new StreamReader(@"Content/" + _settings["StartFile"] + ".txt", Encoding.UTF7);
+      _reader = new StreamReader(@"Content/" + _settings["StartFile"] + ".txt", Encoding.UTF7);
     }
 
     //Reads the next line and fills the CurrentLineStack if needed, to pass the necessary actions on to the GameState
     public string Next() {
-      var line = reader.ReadLine();
+      var line = _reader.ReadLine();
       //while the line is a command
       while (line[0] == '¶') {
         ParseCommand(line.Substring(1));
@@ -79,7 +81,7 @@ namespace VN {
         if (line.Substring(0, 7) == "¶choice") {
           return line;
         }
-        line = reader.ReadLine();
+        line = _reader.ReadLine();
       }
 
       //The next line is a display line
@@ -91,7 +93,7 @@ namespace VN {
         }
         else {
           //Adds the speakers name to the CurrentLineStack
-          currentLineStack.Add("Character", _settings[nameSplit[0]]);
+          CurrentLineStack.Add("Character", _settings[nameSplit[0]]);
           //It's a spoken line, so add quotation marks
           line = "\"" + nameSplit[1] + "\"";
         }
@@ -107,12 +109,12 @@ namespace VN {
         case "next":
           //if the command is in the format: next <decision> filename
           if (split.Length == 3) {
-            if (madeDecisions[split[1]]) {
-              reader = new StreamReader(@"Content/" + split.Last() + ".txt", Encoding.UTF7);
+            if (MadeDecisions[split[1]]) {
+              _reader = new StreamReader(@"Content/" + split.Last() + ".txt", Encoding.UTF7);
             }
           }
           else {
-            reader = new StreamReader(@"Content/" + split.Last() + ".txt", Encoding.UTF7);
+            _reader = new StreamReader(@"Content/" + split.Last() + ".txt", Encoding.UTF7);
           }
           break;
         case "set":
@@ -147,22 +149,22 @@ namespace VN {
           int extraLines = 0;
           for (int i = 0; i < int.Parse(split[1]); i++) {
             //parse options
-            var option = reader.ReadLine();
+            var option = _reader.ReadLine();
             string text = WrapText(option.Substring(option.IndexOf(' ') + 1), OptionWidth);
             int lines = text.Split('\n').Length;
-            options.Add(new Button {
+            Options.Add(new Button {
               BoundingBox = new Rectangle(150, 100 + global.font.LineSpacing * (i + extraLines), OptionWidth, global.font.LineSpacing * lines),
               Choice = option.Split(' ')[0].Substring(1),
               Text = text,
               Sprite = button,
             });
             extraLines += lines - 1;
-            madeDecisions.Add(option.Split(' ')[0].Substring(1), false);
+            MadeDecisions.Add(option.Split(' ')[0].Substring(1), false);
           }
           break;
         case "end":
           //Ends a game and clears the data
-          madeDecisions.Clear();
+          MadeDecisions.Clear();
           global.FinishGame();
           break;
         default:

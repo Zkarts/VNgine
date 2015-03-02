@@ -30,7 +30,7 @@ namespace VN {
         displayString += currentLine[displayString.Length];
       }
       else {
-        if (autoMode && !_parser.options.Any()) {
+        if (autoMode && !_parser.Options.Any()) {
           autoTimer -= gameTime.ElapsedGameTime.TotalSeconds;
           if (autoTimer <= 0) {
             NextLine();
@@ -53,7 +53,7 @@ namespace VN {
 
       if (currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released) {
         //Handle options
-        if (!_parser.options.Any()) {
+        if (!_parser.Options.Any()) {
           //if there are no clickable options
           if (displayString == currentLine) {
             NextLine();
@@ -63,13 +63,13 @@ namespace VN {
           }
         }
         else {
-          foreach (var option in _parser.options) {
+          foreach (var option in _parser.Options) {
             //if clicked on the option button
             if (option.BoundingBox.Contains(new Point(currentMouseState.X, currentMouseState.Y))) {
               //set the option to true in choices
-              _parser.madeDecisions[option.Choice] = true;
+              _parser.MadeDecisions[option.Choice] = true;
               //clear the current options
-              _parser.options.Clear();
+              _parser.Options.Clear();
               currentLine = _parser.Next();
               ProcessCurrentLineStack();
               displayString = "";
@@ -89,9 +89,9 @@ namespace VN {
 
     //Processes everything in the CurrentLineStack
     private void ProcessCurrentLineStack() {
-      if (_parser.currentLineStack.ContainsKey("Character")) {
-        name = _parser.currentLineStack["Character"];
-        _parser.currentLineStack.Remove("Character");
+      if (_parser.CurrentLineStack.ContainsKey("Character")) {
+        name = _parser.CurrentLineStack["Character"];
+        _parser.CurrentLineStack.Remove("Character");
       }
       else {
         name = "";
@@ -99,7 +99,7 @@ namespace VN {
     }
 
     public override void Draw(GameTime gameTime) {
-      if (!_parser.options.Any()) {
+      if (!_parser.Options.Any()) {
         //if there are no clickable options; draw the text and possible name
         global.spriteBatch.DrawString(global.font, displayString, new Vector2(100, 100), Color.Black);
         if (name != "") {
@@ -110,7 +110,7 @@ namespace VN {
         }
       }
       else {
-        foreach (var option in _parser.options) {
+        foreach (var option in _parser.Options) {
           global.spriteBatch.Draw(option.Sprite, option.BoundingBox, Color.White);
           global.spriteBatch.DrawString(global.font, option.Text, new Vector2(option.BoundingBox.Location.X + 15, option.BoundingBox.Location.Y), Color.Black);
         }
